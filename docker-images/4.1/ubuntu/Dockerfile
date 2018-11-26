@@ -10,7 +10,7 @@ FROM        ubuntu:16.04 AS base
 WORKDIR     /tmp/workdir
 
 RUN     apt-get -yqq update && \
-        apt-get install -yq --no-install-recommends ca-certificates expat libgomp1 && \
+        apt-get install -yq --no-install-recommends ca-certificates expat libgomp1 git unzip && \
         apt-get autoremove -y && \
         apt-get clean -y
 
@@ -367,9 +367,20 @@ RUN \
 FROM        base AS release
 MAINTAINER  Julien Rottenberg <julien@rottenberg.info>
 
-CMD         ["--help"]
-ENTRYPOINT  ["ffmpeg"]
+#CMD         ["--help"]
+#ENTRYPOINT  ["ffmpeg"]
 ENV         LD_LIBRARY_PATH=/usr/local/lib
+
+RUN git clone https://github.com/Motion-Project/motion.git  && \
+   cd motion  && \
+   autoreconf -fiv && \
+   ./configure && \
+   make && \
+   make install && \
+   cd .. && \
+   rm -fr motion && \
+
+CMD [ "motion", "-n" ]
 
 COPY --from=build /usr/local /usr/local/
 
