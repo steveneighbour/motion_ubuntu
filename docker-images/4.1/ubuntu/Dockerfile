@@ -1,10 +1,3 @@
-# ffmpeg - http://ffmpeg.org/download.html
-#
-# From https://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu
-#
-# https://hub.docker.com/r/jrottenberg/ffmpeg/
-#
-#
 FROM        ubuntu:16.04 AS base
 
 WORKDIR     /tmp/workdir
@@ -126,34 +119,7 @@ RUN \
         make && \
         make install && \
         rm -rf ${DIR}
-## freetype https://www.freetype.org/
-RUN  \
-        DIR=/tmp/freetype && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sLO http://download.savannah.gnu.org/releases/freetype/freetype-${FREETYPE_VERSION}.tar.gz && \
- #       echo ${FREETYPE_SHA256SUM} | sha256sum --check && \
-        tar -zx --strip-components=1 -f freetype-${FREETYPE_VERSION}.tar.gz && \
-        ./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
-        make && \
-        make install && \
-        rm -rf ${DIR}
 
-## fridibi https://www.fribidi.org/
-# + https://github.com/fribidi/fribidi/issues/8
-RUN  \
-        DIR=/tmp/fribidi && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sLO https://github.com/fribidi/fribidi/archive/${FRIBIDI_VERSION}.tar.gz && \
-#        echo ${FRIBIDI_SHA256SUM} | sha256sum --check && \
-        tar -zx --strip-components=1 -f ${FRIBIDI_VERSION}.tar.gz && \
-        sed -i 's/^SUBDIRS =.*/SUBDIRS=gen.tab charset lib/' Makefile.am && \
-        ./bootstrap --no-config && \
-        ./configure -prefix="${PREFIX}" --disable-static --enable-shared && \
-        make -j 1 && \
-        make install && \
-        rm -rf ${DIR}
 ## fontconfig https://www.freedesktop.org/wiki/Software/fontconfig/
 RUN  \
         DIR=/tmp/fontconfig && \
@@ -223,15 +189,10 @@ RUN \
         --enable-gpl \
         --enable-libass \
         --enable-libfreetype \
-        --enable-libvidstab \
         --enable-libmp3lame \
         --enable-libopenjpeg \
-#        --enable-libopus \
-#        --enable-libtheora \
-#        --enable-libvorbis \
         --enable-libvpx \
         --enable-libx265 \
-#        --enable-libxvid \
         --enable-libx264 \
         --enable-nonfree \
         --enable-openssl \
@@ -259,11 +220,6 @@ RUN \
         cp -r ${PREFIX}/share/ffmpeg /usr/local/share/ && \
         LD_LIBRARY_PATH=/usr/local/lib ffmpeg -buildconf
 
-FROM        base AS release
-MAINTAINER  Julien Rottenberg <julien@rottenberg.info>
-
-#CMD         ["--help"]
-#ENTRYPOINT  ["ffmpeg"]
 ENV         LD_LIBRARY_PATH=/usr/local/lib
 
 RUN git clone https://github.com/Motion-Project/motion.git  && \
@@ -278,6 +234,3 @@ RUN git clone https://github.com/Motion-Project/motion.git  && \
 CMD [ "motion", "-n" ]
 
 COPY --from=build /usr/local /usr/local/
-
-# Let's make sure the app built correctly
-# Convenient to verify on https://hub.docker.com/r/jrottenberg/ffmpeg/builds/ console output
