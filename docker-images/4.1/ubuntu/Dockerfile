@@ -2,7 +2,7 @@ FROM        ubuntu:16.04
 
 WORKDIR     /tmp/workdir
 
-RUN     apt-get -yqq update && \
+RUN     apt-get update && \
         apt-get install -yq --no-install-recommends ca-certificates expat libgomp1 git unzip && \
         apt-get autoremove -y
 	
@@ -48,7 +48,7 @@ RUN      buildDeps="autoconf \
                     yasm \
 		    libfreetype6-dev \
                     zlib1g-dev" && \
-        apt-get -yqq update && \
+        apt-get update && \
         apt-get install -yq --no-install-recommends ${buildDeps}
 
 ## x264 http://www.videolan.org/developers/x264.html
@@ -153,6 +153,7 @@ RUN     DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
 RUN     ldd ${PREFIX}/bin/ffmpeg | grep opt/ffmpeg | cut -d ' ' -f 3 | xargs -i cp {} /usr/local/lib/ && \
         cp ${PREFIX}/bin/* /usr/local/bin/ && \
         cp -r ${PREFIX}/share/ffmpeg /usr/local/share/ && \
+	rm -fr /tmp/* && \
         LD_LIBRARY_PATH=/usr/local/lib ffmpeg -buildconf
 
 ENV     LD_LIBRARY_PATH=/usr/local/lib
