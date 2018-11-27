@@ -18,16 +18,11 @@ ENV         FFMPEG_VERSION=4.1     \
             FDKAAC_VERSION=0.1.5      \
             LAME_VERSION=3.99.5       \
             LIBASS_VERSION=0.13.7     \
-#            OGG_VERSION=1.3.2         \
             OPENCOREAMR_VERSION=0.1.5 \
-#            OPUS_VERSION=1.2          \
             OPENJPEG_VERSION=2.1.2    \
-#            THEORA_VERSION=1.1.1      \
-#            VORBIS_VERSION=1.3.5      \
             VPX_VERSION=1.7.0         \
             X264_VERSION=20170226-2245-stable \
             X265_VERSION=2.3          \
-#            XVID_VERSION=1.3.4        \
             FREETYPE_VERSION=2.5.5    \
             FRIBIDI_VERSION=0.19.7    \
             FONTCONFIG_VERSION=2.12.4 \
@@ -61,8 +56,7 @@ RUN      buildDeps="autoconf \
 
 
 ## x264 http://www.videolan.org/developers/x264.html
-RUN \
-        DIR=/tmp/x264 && \
+RUN     DIR=/tmp/x264 && \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
         curl -sL https://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-${X264_VERSION}.tar.bz2 | \
@@ -72,8 +66,7 @@ RUN \
         make install && \
         rm -rf ${DIR}
 ### x265 http://x265.org/
-RUN \
-        DIR=/tmp/x265 && \
+RUN     DIR=/tmp/x265 && \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
         curl -sL https://download.videolan.org/pub/videolan/x265/x265_${X265_VERSION}.tar.gz  | \
@@ -86,8 +79,7 @@ RUN \
         rm -rf ${DIR}
 
 ### libmp3lame http://lame.sourceforge.net/
-RUN \
-        DIR=/tmp/lame && \
+RUN     DIR=/tmp/lame && \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
         curl -sL https://kent.dl.sourceforge.net/project/lame/lame/$(echo ${LAME_VERSION} | sed -e 's/[^0-9]*\([0-9]*\)[.]\([0-9]*\)[.]\([0-9]*\)\([0-9A-Za-z-]*\)/\1.\2/')/lame-${LAME_VERSION}.tar.gz | \
@@ -97,8 +89,7 @@ RUN \
         make install && \
         rm -rf ${DIR}
 
-RUN \
-        DIR=/tmp/fdk-aac && \
+RUN     DIR=/tmp/fdk-aac && \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
         curl -sL https://github.com/mstorsjo/fdk-aac/archive/v${FDKAAC_VERSION}.tar.gz | \
@@ -121,8 +112,7 @@ RUN \
         rm -rf ${DIR}
 
 ## fontconfig https://www.freedesktop.org/wiki/Software/fontconfig/
-RUN  \
-        DIR=/tmp/fontconfig && \
+RUN     DIR=/tmp/fontconfig && \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
         curl -sLO https://www.freedesktop.org/software/fontconfig/release/fontconfig-${FONTCONFIG_VERSION}.tar.bz2 &&\
@@ -132,12 +122,10 @@ RUN  \
         make install && \
         rm -rf ${DIR}
 ## libass https://github.com/libass/libass
-RUN  \
-        DIR=/tmp/libass && \
+RUN     DIR=/tmp/libass && \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
         curl -sLO https://github.com/libass/libass/archive/${LIBASS_VERSION}.tar.gz &&\
- #       echo ${LIBASS_SHA256SUM} | sha256sum --check && \
         tar -zx --strip-components=1 -f ${LIBASS_VERSION}.tar.gz && \
         ./autogen.sh && \
         ./configure -prefix="${PREFIX}" --disable-static --enable-shared && \
@@ -145,8 +133,7 @@ RUN  \
         make install && \
         rm -rf ${DIR}
 ## kvazaar https://github.com/ultravideo/kvazaar
-RUN \
-        DIR=/tmp/kvazaar && \
+RUN     DIR=/tmp/kvazaar && \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
         curl -sLO https://github.com/ultravideo/kvazaar/archive/v${KVAZAAR_VERSION}.tar.gz &&\
@@ -157,8 +144,7 @@ RUN \
         make install && \
         rm -rf ${DIR}
 
-RUN \
-	DIR=/tmp/aom && \
+RUN     DIR=/tmp/aom && \
         git clone --branch ${AOM_VERSION} --depth 1 https://aomedia.googlesource.com/aom ${DIR} ; \
         cd ${DIR} ; \
         rm -rf CMakeCache.txt CMakeFiles ; \
@@ -170,14 +156,12 @@ RUN \
         rm -rf ${DIR}
 
 ## ffmpeg https://ffmpeg.org/
-RUN  \
-        DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
+RUN     DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
         curl -sLO https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.bz2 && \
         tar -jx --strip-components=1 -f ffmpeg-${FFMPEG_VERSION}.tar.bz2
 
 
-RUN \
-        DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
+RUN     DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
         ./configure \
         --disable-debug \
         --disable-doc \
@@ -214,13 +198,13 @@ RUN \
         cp qt-faststart ${PREFIX}/bin
 
 ## cleanup
-RUN \
-        ldd ${PREFIX}/bin/ffmpeg | grep opt/ffmpeg | cut -d ' ' -f 3 | xargs -i cp {} /usr/local/lib/ && \
+RUN     ldd ${PREFIX}/bin/ffmpeg | grep opt/ffmpeg | cut -d ' ' -f 3 | xargs -i cp {} /usr/local/lib/ && \
         cp ${PREFIX}/bin/* /usr/local/bin/ && \
         cp -r ${PREFIX}/share/ffmpeg /usr/local/share/ && \
         LD_LIBRARY_PATH=/usr/local/lib ffmpeg -buildconf
 
-ENV         LD_LIBRARY_PATH=/usr/local/lib
+ENV     LD_LIBRARY_PATH=/usr/local/lib
+COPY --from=build /usr/local /usr/local/
 
 RUN git clone https://github.com/Motion-Project/motion.git  && \
    cd motion  && \
@@ -232,5 +216,3 @@ RUN git clone https://github.com/Motion-Project/motion.git  && \
    rm -fr motion && \
 
 CMD [ "motion", "-n" ]
-
-COPY --from=build /usr/local /usr/local/
