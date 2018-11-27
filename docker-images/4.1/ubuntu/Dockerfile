@@ -1,4 +1,4 @@
-FROM        ubuntu:16.04 AS base
+FROM        ubuntu:16.04
 
 WORKDIR     /tmp/workdir
 
@@ -6,8 +6,6 @@ RUN     apt-get -yqq update && \
         apt-get install -yq --no-install-recommends ca-certificates expat libgomp1 git unzip && \
         apt-get autoremove -y && \
         apt-get clean -y
-
-FROM base as build
 
 ARG        PKG_CONFIG_PATH=/opt/ffmpeg/lib/pkgconfig
 ARG        LD_LIBRARY_PATH=/opt/ffmpeg/lib
@@ -63,8 +61,7 @@ RUN     DIR=/tmp/x264 && \
         tar -jx --strip-components=1 && \
         ./configure --prefix="${PREFIX}" --enable-shared --enable-pic --disable-cli && \
         make && \
-        make install && \
-        rm -rf ${DIR}
+        make install 
 ### x265 http://x265.org/
 RUN     DIR=/tmp/x265 && \
         mkdir -p ${DIR} && \
@@ -75,8 +72,7 @@ RUN     DIR=/tmp/x265 && \
         sed -i "/-DEXTRA_LIB/ s/$/ -DCMAKE_INSTALL_PREFIX=\${PREFIX}/" multilib.sh && \
         sed -i "/^cmake/ s/$/ -DENABLE_CLI=OFF/" multilib.sh && \
         ./multilib.sh && \
-        make -C 8bit install && \
-        rm -rf ${DIR}
+        make -C 8bit install
 
 ### libmp3lame http://lame.sourceforge.net/
 RUN     DIR=/tmp/lame && \
@@ -86,8 +82,7 @@ RUN     DIR=/tmp/lame && \
         tar -zx --strip-components=1 && \
         ./configure --prefix="${PREFIX}" --bindir="${PREFIX}/bin" --enable-shared --enable-nasm --enable-pic --disable-frontend && \
         make && \
-        make install && \
-        rm -rf ${DIR}
+        make install
 
 RUN     DIR=/tmp/fdk-aac && \
         mkdir -p ${DIR} && \
@@ -97,8 +92,7 @@ RUN     DIR=/tmp/fdk-aac && \
         autoreconf -fiv && \
         ./configure --prefix="${PREFIX}" --enable-shared --datadir="${DIR}" && \
         make && \
-        make install && \
-        rm -rf ${DIR}
+        make install
 ## openjpeg https://github.com/uclouvain/openjpeg
 RUN \
         DIR=/tmp/openjpeg && \
@@ -108,8 +102,7 @@ RUN \
         tar -zx --strip-components=1 && \
         cmake -DBUILD_THIRDPARTY:BOOL=ON -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
         make && \
-        make install && \
-        rm -rf ${DIR}
+        make install
 
 ## fontconfig https://www.freedesktop.org/wiki/Software/fontconfig/
 RUN     DIR=/tmp/fontconfig && \
@@ -119,8 +112,7 @@ RUN     DIR=/tmp/fontconfig && \
         tar -jx --strip-components=1 -f fontconfig-${FONTCONFIG_VERSION}.tar.bz2 && \
         ./configure -prefix="${PREFIX}" --disable-static --enable-shared && \
         make && \
-        make install && \
-        rm -rf ${DIR}
+        make install 
 ## libass https://github.com/libass/libass
 RUN     DIR=/tmp/libass && \
         mkdir -p ${DIR} && \
@@ -130,8 +122,8 @@ RUN     DIR=/tmp/libass && \
         ./autogen.sh && \
         ./configure -prefix="${PREFIX}" --disable-static --enable-shared && \
         make && \
-        make install && \
-        rm -rf ${DIR}
+        make install
+	
 ## kvazaar https://github.com/ultravideo/kvazaar
 RUN     DIR=/tmp/kvazaar && \
         mkdir -p ${DIR} && \
@@ -141,25 +133,12 @@ RUN     DIR=/tmp/kvazaar && \
         ./autogen.sh && \
         ./configure -prefix="${PREFIX}" --disable-static --enable-shared && \
         make && \
-        make install && \
-        rm -rf ${DIR}
-
-RUN     DIR=/tmp/aom && \
-        git clone --branch ${AOM_VERSION} --depth 1 https://aomedia.googlesource.com/aom ${DIR} ; \
-        cd ${DIR} ; \
-        rm -rf CMakeCache.txt CMakeFiles ; \
-        mkdir -p ./aom_build ; \
-        cd ./aom_build ; \
-        cmake -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DBUILD_SHARED_LIBS=1 ..; \
-        make ; \
-        make install ; \
-        rm -rf ${DIR}
+        make install
 
 ## ffmpeg https://ffmpeg.org/
 RUN     DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
         curl -sLO https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.bz2 && \
         tar -jx --strip-components=1 -f ffmpeg-${FFMPEG_VERSION}.tar.bz2
-
 
 RUN     DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
         ./configure \
@@ -204,7 +183,6 @@ RUN     ldd ${PREFIX}/bin/ffmpeg | grep opt/ffmpeg | cut -d ' ' -f 3 | xargs -i 
         LD_LIBRARY_PATH=/usr/local/lib ffmpeg -buildconf
 
 ENV     LD_LIBRARY_PATH=/usr/local/lib
-COPY --from=build /usr/local /usr/local/
 
 RUN git clone https://github.com/Motion-Project/motion.git  && \
    cd motion  && \
