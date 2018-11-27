@@ -110,17 +110,7 @@ RUN     DIR=/tmp/fontconfig && \
         ./configure -prefix="${PREFIX}" --disable-static --enable-shared && \
         make && \
         make install 
-## libass https://github.com/libass/libass
-RUN     DIR=/tmp/libass && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sLO https://github.com/libass/libass/archive/${LIBASS_VERSION}.tar.gz &&\
-        tar -zx --strip-components=1 -f ${LIBASS_VERSION}.tar.gz && \
-        ./autogen.sh && \
-        ./configure -prefix="${PREFIX}" --disable-static --enable-shared && \
-        make && \
-        make install
-	
+
 ## ffmpeg https://ffmpeg.org/
 RUN     DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
         curl -sLO https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.bz2 && \
@@ -136,7 +126,6 @@ RUN     DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
         --enable-libopencore-amrnb \
         --enable-libopencore-amrwb \
         --enable-gpl \
-        --enable-libass \
         --enable-libfreetype \
         --enable-libmp3lame \
         --enable-libopenjpeg \
