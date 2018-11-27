@@ -1,4 +1,4 @@
-FROM        ubuntu:17.10
+FROM        ubuntu:16.04
 
 #RUN         mkdir /tmp/workdir
 #WORKDIR     /tmp/workdir
@@ -114,7 +114,6 @@ RUN     DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
         --enable-libx264 \
         --enable-nonfree \
         --enable-openssl \
-        --enable-libfdk_aac \
         --enable-postproc \
         --enable-small \
         --enable-version3 \
