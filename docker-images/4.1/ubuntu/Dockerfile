@@ -4,9 +4,8 @@ WORKDIR     /tmp/workdir
 
 RUN     apt-get -yqq update && \
         apt-get install -yq --no-install-recommends ca-certificates expat libgomp1 git unzip && \
-        apt-get autoremove -y && \
-        apt-get clean -y
-
+        apt-get autoremove -y
+	
 ARG        PKG_CONFIG_PATH=/opt/ffmpeg/lib/pkgconfig
 ARG        LD_LIBRARY_PATH=/opt/ffmpeg/lib
 ARG        PREFIX=/opt/ffmpeg
@@ -51,7 +50,6 @@ RUN      buildDeps="autoconf \
                     zlib1g-dev" && \
         apt-get -yqq update && \
         apt-get install -yq --no-install-recommends ${buildDeps}
-
 
 ## x264 http://www.videolan.org/developers/x264.html
 RUN     DIR=/tmp/x264 && \
