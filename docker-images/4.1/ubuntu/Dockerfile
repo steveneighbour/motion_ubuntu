@@ -8,9 +8,10 @@ RUN     apt-get update && \
 	autoconf automake cmake curl bzip2 libexpat1-dev g++ gcc gperf libtool make nasm perl \
         pkg-config python libssl-dev yasm libfreetype6-dev zlib1g-dev 
 	
-#ARG        PKG_CONFIG_PATH=/opt/ffmpeg/lib/pkgconfig
-#ARG        LD_LIBRARY_PATH=/opt/ffmpeg/lib
-#ARG        MAKEFLAGS="-j4"
+ARG        PKG_CONFIG_PATH=/opt/ffmpeg/lib/pkgconfig
+ARG        LD_LIBRARY_PATH=/opt/ffmpeg/lib
+ARG        PREFIX=/opt/ffmpeg
+ARG        MAKEFLAGS="-j4"
 
 ENV         FFMPEG_VERSION=4.1     \
             FDKAAC_VERSION=0.1.5      \
@@ -29,27 +30,29 @@ ENV         FFMPEG_VERSION=4.1     \
             AOM_VERSION=v1.0.0        \
             SRC=/usr/local
 
-## x264 http://www.videolan.org/developers/x264.html
-RUN     DIR=/tmp/x264 && \
+RUN \
+        DIR=/tmp/x264 && \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
         curl -sL https://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-${X264_VERSION}.tar.bz2 | \
         tar -jx --strip-components=1 && \
-        ./configure --prefix=/opt/ffmpeg --enable-shared --enable-pic --disable-cli && \
+        ./configure --prefix="${PREFIX}" --enable-shared --enable-pic --disable-cli && \
         make && \
-        make install 
-	
+        make install && \
+        rm -rf ${DIR}
 ### x265 http://x265.org/
-RUN     DIR=/tmp/x265 && \
+RUN \
+        DIR=/tmp/x265 && \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
         curl -sL https://download.videolan.org/pub/videolan/x265/x265_${X265_VERSION}.tar.gz  | \
         tar -zx && \
         cd x265_${X265_VERSION}/build/linux && \
-	sed -i "/-DEXTRA_LIB/ s/$/ -DCMAKE_INSTALL_PREFIX=\/opt/ffmpeg/" multilib.sh && \
+        sed -i "/-DEXTRA_LIB/ s/$/ -DCMAKE_INSTALL_PREFIX=\${PREFIX}/" multilib.sh && \
         sed -i "/^cmake/ s/$/ -DENABLE_CLI=OFF/" multilib.sh && \
         ./multilib.sh && \
-        make -C 8bit install
+        make -C 8bit install && \
+        rm -rf ${DIR}
 
 ### libmp3lame http://lame.sourceforge.net/
 RUN     DIR=/tmp/lame && \
