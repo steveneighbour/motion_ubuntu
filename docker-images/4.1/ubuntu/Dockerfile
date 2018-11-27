@@ -102,8 +102,6 @@ RUN     DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
         --disable-ffplay \
         --enable-shared \
         --enable-avresample \
-        --enable-libopencore-amrnb \
-        --enable-libopencore-amrwb \
         --enable-gpl \
         --enable-libfreetype \
         --enable-libmp3lame \
