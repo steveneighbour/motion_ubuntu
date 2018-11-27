@@ -3,8 +3,9 @@ FROM        ubuntu:16.04
 WORKDIR     /tmp/workdir
 
 RUN     apt-get update && \
-        apt-get install -yq --no-install-recommends ca-certificates expat libgomp1 git unzip && \
-        apt-get autoremove -y
+        apt-get install -y --no-install-recommends ca-certificates expat libgomp1 git unzip \
+	autoconf automake cmake curl bzip2 libexpat1-dev g++ gcc gperf libtool make nasm perl \
+        pkg-config python libssl-dev yasm libfreetype6-dev zlib1g-dev 
 	
 ARG        PKG_CONFIG_PATH=/opt/ffmpeg/lib/pkgconfig
 ARG        LD_LIBRARY_PATH=/opt/ffmpeg/lib
@@ -28,29 +29,6 @@ ENV         FFMPEG_VERSION=4.1     \
             AOM_VERSION=v1.0.0        \
             SRC=/usr/local
 
-RUN      buildDeps="autoconf \
-                    automake \
-                    cmake \
-                    curl \
-                    bzip2 \
-                    libexpat1-dev \
-                    g++ \
-                    gcc \
-                    git \
-                    gperf \
-                    libtool \
-                    make \
-                    nasm \
-                    perl \
-                    pkg-config \
-                    python \
-                    libssl-dev \
-                    yasm \
-		    libfreetype6-dev \
-                    zlib1g-dev" && \
-        apt-get update && \
-        apt-get install -yq --no-install-recommends ${buildDeps}
-
 ## x264 http://www.videolan.org/developers/x264.html
 RUN     DIR=/tmp/x264 && \
         mkdir -p ${DIR} && \
@@ -60,6 +38,7 @@ RUN     DIR=/tmp/x264 && \
         ./configure --prefix="${PREFIX}" --enable-shared --enable-pic --disable-cli && \
         make && \
         make install 
+	
 ### x265 http://x265.org/
 RUN     DIR=/tmp/x265 && \
         mkdir -p ${DIR} && \
@@ -91,6 +70,7 @@ RUN     DIR=/tmp/fdk-aac && \
         ./configure --prefix="${PREFIX}" --enable-shared --datadir="${DIR}" && \
         make && \
         make install
+	
 ## openjpeg https://github.com/uclouvain/openjpeg
 RUN     DIR=/tmp/openjpeg && \
         mkdir -p ${DIR} && \
