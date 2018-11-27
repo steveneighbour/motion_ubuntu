@@ -56,6 +56,7 @@ ARG         FRIBIDI_SHA256SUM="3fc96fa9473bd31dcb5500bdf1aa78b337ba13eb8c301e7c2
 
 RUN      buildDeps="autoconf \
                     automake \
+		    freetype2 \
                     cmake \
                     curl \
                     bzip2 \
