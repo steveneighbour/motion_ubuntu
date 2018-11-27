@@ -54,26 +54,6 @@ RUN \
         make -C 8bit install && \
         rm -rf ${DIR}
 
-### libmp3lame http://lame.sourceforge.net/
-RUN     DIR=/tmp/lame && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sL https://kent.dl.sourceforge.net/project/lame/lame/$(echo ${LAME_VERSION} | sed -e 's/[^0-9]*\([0-9]*\)[.]\([0-9]*\)[.]\([0-9]*\)\([0-9A-Za-z-]*\)/\1.\2/')/lame-${LAME_VERSION}.tar.gz | \
-        tar -zx --strip-components=1 && \
-        ./configure --prefix=/opt/ffmpeg --bindir=/opt/ffmpeg/bin --enable-shared --enable-nasm --enable-pic --disable-frontend && \
-        make && \
-        make install
-
-RUN     DIR=/tmp/fdk-aac && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sL https://github.com/mstorsjo/fdk-aac/archive/v${FDKAAC_VERSION}.tar.gz | \
-        tar -zx --strip-components=1 && \
-        autoreconf -fiv && \
-        ./configure --prefix=/opt/ffmpeg --enable-shared --datadir="${DIR}" && \
-        make && \
-        make install
-	
 ## openjpeg https://github.com/uclouvain/openjpeg
 RUN     DIR=/tmp/openjpeg && \
         mkdir -p ${DIR} && \
@@ -108,7 +88,6 @@ RUN     DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
         --enable-avresample \
         --enable-gpl \
         --enable-libfreetype \
-        --enable-libmp3lame \
         --enable-libopenjpeg \
         --enable-libx265 \
         --enable-libx264 \
