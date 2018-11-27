@@ -27,7 +27,7 @@ ENV         FFMPEG_VERSION=4.1     \
             LIBASS_VERSION=0.13.7     \
 #            OGG_VERSION=1.3.2         \
             OPENCOREAMR_VERSION=0.1.5 \
-            OPUS_VERSION=1.2          \
+#            OPUS_VERSION=1.2          \
             OPENJPEG_VERSION=2.1.2    \
 #            THEORA_VERSION=1.1.1      \
 #            VORBIS_VERSION=1.3.5      \
@@ -123,18 +123,18 @@ RUN \
 #        make install && \
 #        rm -rf ${DIR}
 ### libopus https://www.opus-codec.org/
-RUN \
-        DIR=/tmp/opus && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sLO https://archive.mozilla.org/pub/opus/opus-${OPUS_VERSION}.tar.gz && \
-        echo ${OPUS_SHA256SUM} | sha256sum --check && \
-        tar -zx --strip-components=1 -f opus-${OPUS_VERSION}.tar.gz && \
-        autoreconf -fiv && \
-        ./configure --prefix="${PREFIX}" --enable-shared && \
-        make && \
-        make install && \
-        rm -rf ${DIR}
+#RUN \
+#        DIR=/tmp/opus && \
+#       mkdir -p ${DIR} && \
+#        cd ${DIR} && \
+#        curl -sLO https://archive.mozilla.org/pub/opus/opus-${OPUS_VERSION}.tar.gz && \
+#        echo ${OPUS_SHA256SUM} | sha256sum --check && \
+#        tar -zx --strip-components=1 -f opus-${OPUS_VERSION}.tar.gz && \
+#        autoreconf -fiv && \
+#        ./configure --prefix="${PREFIX}" --enable-shared && \
+#        make && \
+#        make install && \
+#        rm -rf ${DIR}
 ### libvorbis https://xiph.org/vorbis/
 #RUN \
 #        DIR=/tmp/vorbis && \
@@ -330,7 +330,7 @@ RUN \
         --enable-libvidstab \
         --enable-libmp3lame \
         --enable-libopenjpeg \
-        --enable-libopus \
+#        --enable-libopus \
 #        --enable-libtheora \
 #        --enable-libvorbis \
         --enable-libvpx \
