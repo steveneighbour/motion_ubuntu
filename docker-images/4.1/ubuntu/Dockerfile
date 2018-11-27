@@ -7,10 +7,9 @@ RUN     apt-get update && \
 	autoconf automake cmake curl bzip2 libexpat1-dev g++ gcc gperf libtool make nasm perl \
         pkg-config python libssl-dev yasm libfreetype6-dev zlib1g-dev 
 	
-ARG        PKG_CONFIG_PATH=/opt/ffmpeg/lib/pkgconfig
-ARG        LD_LIBRARY_PATH=/opt/ffmpeg/lib
-ARG        PREFIX=/opt/ffmpeg
-ARG        MAKEFLAGS="-j4"
+#ARG        PKG_CONFIG_PATH=/opt/ffmpeg/lib/pkgconfig
+#ARG        LD_LIBRARY_PATH=/opt/ffmpeg/lib
+#ARG        MAKEFLAGS="-j4"
 
 ENV         FFMPEG_VERSION=4.1     \
             FDKAAC_VERSION=0.1.5      \
@@ -35,7 +34,7 @@ RUN     DIR=/tmp/x264 && \
         cd ${DIR} && \
         curl -sL https://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-${X264_VERSION}.tar.bz2 | \
         tar -jx --strip-components=1 && \
-        ./configure --prefix="${PREFIX}" --enable-shared --enable-pic --disable-cli && \
+        ./configure --prefix=/opt/ffmpeg --enable-shared --enable-pic --disable-cli && \
         make && \
         make install 
 	
@@ -46,7 +45,7 @@ RUN     DIR=/tmp/x265 && \
         curl -sL https://download.videolan.org/pub/videolan/x265/x265_${X265_VERSION}.tar.gz  | \
         tar -zx && \
         cd x265_${X265_VERSION}/build/linux && \
-        sed -i "/-DEXTRA_LIB/ s/$/ -DCMAKE_INSTALL_PREFIX=\${PREFIX}/" multilib.sh && \
+        sed -i "/-DEXTRA_LIB/ s/$/ -DCMAKE_INSTALL_PREFIX=\/opt/ffmpeg/" multilib.sh && \
         sed -i "/^cmake/ s/$/ -DENABLE_CLI=OFF/" multilib.sh && \
         ./multilib.sh && \
         make -C 8bit install
@@ -57,7 +56,7 @@ RUN     DIR=/tmp/lame && \
         cd ${DIR} && \
         curl -sL https://kent.dl.sourceforge.net/project/lame/lame/$(echo ${LAME_VERSION} | sed -e 's/[^0-9]*\([0-9]*\)[.]\([0-9]*\)[.]\([0-9]*\)\([0-9A-Za-z-]*\)/\1.\2/')/lame-${LAME_VERSION}.tar.gz | \
         tar -zx --strip-components=1 && \
-        ./configure --prefix="${PREFIX}" --bindir="${PREFIX}/bin" --enable-shared --enable-nasm --enable-pic --disable-frontend && \
+        ./configure --prefix=/opt/ffmpeg --bindir=/opt/ffmpeg/bin --enable-shared --enable-nasm --enable-pic --disable-frontend && \
         make && \
         make install
 
@@ -67,7 +66,7 @@ RUN     DIR=/tmp/fdk-aac && \
         curl -sL https://github.com/mstorsjo/fdk-aac/archive/v${FDKAAC_VERSION}.tar.gz | \
         tar -zx --strip-components=1 && \
         autoreconf -fiv && \
-        ./configure --prefix="${PREFIX}" --enable-shared --datadir="${DIR}" && \
+        ./configure --prefix=/opt/ffmpeg --enable-shared --datadir="${DIR}" && \
         make && \
         make install
 	
@@ -77,7 +76,7 @@ RUN     DIR=/tmp/openjpeg && \
         cd ${DIR} && \
         curl -sL https://github.com/uclouvain/openjpeg/archive/v${OPENJPEG_VERSION}.tar.gz | \
         tar -zx --strip-components=1 && \
-        cmake -DBUILD_THIRDPARTY:BOOL=ON -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
+        cmake -DBUILD_THIRDPARTY:BOOL=ON -DCMAKE_INSTALL_PREFIX=/opt/ffmpeg . && \
         make && \
         make install
 
