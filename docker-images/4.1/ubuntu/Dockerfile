@@ -54,16 +54,6 @@ RUN \
         make -C 8bit install && \
         rm -rf ${DIR}
 
-## openjpeg https://github.com/uclouvain/openjpeg
-RUN     DIR=/tmp/openjpeg && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sL https://github.com/uclouvain/openjpeg/archive/v${OPENJPEG_VERSION}.tar.gz | \
-        tar -zx --strip-components=1 && \
-        cmake -DBUILD_THIRDPARTY:BOOL=ON -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
-        make && \
-        make install
-
 ## fontconfig https://www.freedesktop.org/wiki/Software/fontconfig/
 RUN     DIR=/tmp/fontconfig && \
         mkdir -p ${DIR} && \
@@ -88,7 +78,6 @@ RUN     DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
         --enable-avresample \
         --enable-gpl \
         --enable-libfreetype \
-        --enable-libopenjpeg \
         --enable-libx265 \
         --enable-libx264 \
         --enable-nonfree \
