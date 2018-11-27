@@ -313,10 +313,9 @@ RUN  \
         tar -jx --strip-components=1 -f ffmpeg-${FFMPEG_VERSION}.tar.bz2
 
 
-
+ARG     PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig
 RUN \
         DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
-	PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig && \
         ./configure \
         --disable-debug \
         --disable-doc \
