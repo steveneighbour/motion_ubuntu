@@ -92,8 +92,7 @@ RUN     DIR=/tmp/fdk-aac && \
         make && \
         make install
 ## openjpeg https://github.com/uclouvain/openjpeg
-RUN \
-        DIR=/tmp/openjpeg && \
+RUN     DIR=/tmp/openjpeg && \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
         curl -sL https://github.com/uclouvain/openjpeg/archive/v${OPENJPEG_VERSION}.tar.gz | \
@@ -122,17 +121,6 @@ RUN     DIR=/tmp/libass && \
         make && \
         make install
 	
-## kvazaar https://github.com/ultravideo/kvazaar
-RUN     DIR=/tmp/kvazaar && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sLO https://github.com/ultravideo/kvazaar/archive/v${KVAZAAR_VERSION}.tar.gz &&\
-        tar -zx --strip-components=1 -f v${KVAZAAR_VERSION}.tar.gz && \
-        ./autogen.sh && \
-        ./configure -prefix="${PREFIX}" --disable-static --enable-shared && \
-        make && \
-        make install
-
 ## ffmpeg https://ffmpeg.org/
 RUN     DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
         curl -sLO https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.bz2 && \
@@ -152,13 +140,11 @@ RUN     DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
         --enable-libfreetype \
         --enable-libmp3lame \
         --enable-libopenjpeg \
-        --enable-libvpx \
         --enable-libx265 \
         --enable-libx264 \
         --enable-nonfree \
         --enable-openssl \
         --enable-libfdk_aac \
-        --enable-libkvazaar \
         --enable-postproc \
         --enable-small \
         --enable-version3 \
