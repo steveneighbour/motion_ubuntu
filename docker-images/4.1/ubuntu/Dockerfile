@@ -1,5 +1,6 @@
 FROM        ubuntu:16.04
 
+RUN         mkdir /tmp/workdir
 WORKDIR     /tmp/workdir
 
 RUN     apt-get update && \
