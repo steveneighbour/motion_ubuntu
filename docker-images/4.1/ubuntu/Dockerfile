@@ -46,7 +46,7 @@ RUN     DIR=/tmp/x265 && \
         curl -sL https://download.videolan.org/pub/videolan/x265/x265_${X265_VERSION}.tar.gz  | \
         tar -zx && \
         cd x265_${X265_VERSION}/build/linux && \
-	sed -i "/-DEXTRA_LIB/ s/$/ -DCMAKE_INSTALL_PREFIX=\/opt/ffmpeg//" multilib.sh && \
+	sed -i "/-DEXTRA_LIB/ s/$/ -DCMAKE_INSTALL_PREFIX=\/opt/ffmpeg/" multilib.sh && \
         sed -i "/^cmake/ s/$/ -DENABLE_CLI=OFF/" multilib.sh && \
         ./multilib.sh && \
         make -C 8bit install
