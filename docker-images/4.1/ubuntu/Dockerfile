@@ -1,7 +1,6 @@
-FROM        ubuntu:16.04
+FROM        ubuntu:17.10
 
-#RUN         mkdir /tmp/workdir
-#WORKDIR     /tmp/workdir
+WORKDIR     /tmp/workdir
 
 RUN     apt-get update && \
         apt-get install -y --no-install-recommends ca-certificates expat libgomp1 git unzip \
@@ -14,24 +13,12 @@ ARG        PREFIX=/opt/ffmpeg
 ARG        MAKEFLAGS="-j4"
 
 ENV         FFMPEG_VERSION=4.1     \
-            FDKAAC_VERSION=0.1.5      \
-            LAME_VERSION=3.99.5       \
-            LIBASS_VERSION=0.13.7     \
-            OPENCOREAMR_VERSION=0.1.5 \
             OPENJPEG_VERSION=2.1.2    \
-            VPX_VERSION=1.7.0         \
             X264_VERSION=20170226-2245-stable \
             X265_VERSION=2.3          \
-            FREETYPE_VERSION=2.5.5    \
-            FRIBIDI_VERSION=0.19.7    \
-            FONTCONFIG_VERSION=2.12.4 \
-            LIBVIDSTAB_VERSION=1.1.0  \
-            KVAZAAR_VERSION=1.2.0     \
-            AOM_VERSION=v1.0.0        \
             SRC=/usr/local
 
-RUN \
-        DIR=/tmp/x264 && \
+RUN     DIR=/tmp/x264 && \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
         curl -sL https://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-${X264_VERSION}.tar.bz2 | \
@@ -40,9 +27,9 @@ RUN \
         make && \
         make install && \
         rm -rf ${DIR}
+	
 ### x265 http://x265.org/
-RUN \
-        DIR=/tmp/x265 && \
+RUN     DIR=/tmp/x265 && \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
         curl -sL https://download.videolan.org/pub/videolan/x265/x265_${X265_VERSION}.tar.gz  | \
@@ -54,16 +41,17 @@ RUN \
         make -C 8bit install && \
         rm -rf ${DIR}
 
-## fontconfig https://www.freedesktop.org/wiki/Software/fontconfig/
-RUN     DIR=/tmp/fontconfig && \
+## openjpeg https://github.com/uclouvain/openjpeg
+RUN     DIR=/tmp/openjpeg && \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
-        curl -sLO https://www.freedesktop.org/software/fontconfig/release/fontconfig-${FONTCONFIG_VERSION}.tar.bz2 &&\
-        tar -jx --strip-components=1 -f fontconfig-${FONTCONFIG_VERSION}.tar.bz2 && \
-        ./configure -prefix="${PREFIX}" --disable-static --enable-shared && \
+        curl -sL https://github.com/uclouvain/openjpeg/archive/v${OPENJPEG_VERSION}.tar.gz | \
+        tar -zx --strip-components=1 && \
+        cmake -DBUILD_THIRDPARTY:BOOL=ON -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
         make && \
-        make install 
-
+        make install && \
+        rm -rf ${DIR}
+	
 ## ffmpeg https://ffmpeg.org/
 RUN     DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
         curl -sLO https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.bz2 && \
