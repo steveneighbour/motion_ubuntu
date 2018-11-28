@@ -71,13 +71,13 @@ RUN     DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
         cp qt-faststart ${PREFIX}/bin
 
 ## cleanup
-RUN     ldd ${PREFIX}/bin/ffmpeg | grep opt/ffmpeg | cut -d ' ' -f 3 | xargs -i cp {} /usr/local/lib/ && \
-        cp ${PREFIX}/bin/* /usr/local/bin/ && \
-        cp -r ${PREFIX}/share/ffmpeg /usr/local/share/ && \
+RUN     \
+        #ldd ${PREFIX}/bin/ffmpeg | grep opt/ffmpeg | cut -d ' ' -f 3 | xargs -i cp {} /usr/local/lib/ && \
+        #cp ${PREFIX}/bin/* /usr/local/bin/ && \
+        #cp -r ${PREFIX}/share/ffmpeg /usr/local/share/ && \
 	rm -fr /tmp/* && \
         LD_LIBRARY_PATH=/usr/local/lib ffmpeg -buildconf
 
-ENV     LD_LIBRARY_PATH=/usr/local/lib
 
 RUN git clone https://github.com/Motion-Project/motion.git  && \
    cd motion  && \
