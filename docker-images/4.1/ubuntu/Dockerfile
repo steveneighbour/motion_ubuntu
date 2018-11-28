@@ -15,7 +15,6 @@ ARG        MAKEFLAGS="-j4"
 ENV         FFMPEG_VERSION=4.1     \
             OPENJPEG_VERSION=2.1.2    \
             X264_VERSION=20170226-2245-stable \
-            X265_VERSION=2.3          \
             SRC=/usr/local
 
 RUN     DIR=/tmp/x264 && \
@@ -28,19 +27,6 @@ RUN     DIR=/tmp/x264 && \
         make install && \
         rm -rf ${DIR}
 	
-### x265 http://x265.org/
-RUN     DIR=/tmp/x265 && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sL https://download.videolan.org/pub/videolan/x265/x265_${X265_VERSION}.tar.gz  | \
-        tar -zx && \
-        cd x265_${X265_VERSION}/build/linux && \
-        sed -i "/-DEXTRA_LIB/ s/$/ -DCMAKE_INSTALL_PREFIX=\${PREFIX}/" multilib.sh && \
-        sed -i "/^cmake/ s/$/ -DENABLE_CLI=OFF/" multilib.sh && \
-        ./multilib.sh && \
-        make -C 8bit install && \
-        rm -rf ${DIR}
-
 ## openjpeg https://github.com/uclouvain/openjpeg
 RUN     DIR=/tmp/openjpeg && \
         mkdir -p ${DIR} && \
@@ -57,8 +43,6 @@ RUN     DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
         curl -sLO https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.bz2 && \
         tar -jx --strip-components=1 -f ffmpeg-${FFMPEG_VERSION}.tar.bz2
 
-ARG        PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
-
 RUN     DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
         ./configure \
         --disable-debug \
@@ -68,7 +52,6 @@ RUN     DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
         --enable-avresample \
         --enable-gpl \
         --enable-libfreetype \
-        --enable-libx265 \
         --enable-libx264 \
         --enable-nonfree \
         --enable-openssl \
